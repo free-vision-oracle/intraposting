@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+  <meta charset="UTF-8">
+  <title>intraposting</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="favicon.png">
+<body>
+  <div id="shade"></div>
+  <div id="root">
+    <div id="channel-area">
+      <div id="channel-editor">
+         <input type="text" id="channel-input" size="12" value="general">
+         <input type="button" value="submit" id="channel-submit">
+      </div>
+      <div id="channels"></div>
+    </div>
+    <div id="chat-area">
+        <div id="channel-info">
+          <span id="file-area">
+            <input type="button" value="save" id="save-chat-button">
+            <input type="file" id="load-chat-input" accept="text/json">
+            <input type="button" value="load" id="load-chat-button">
+          </span>
+        </div>
+        <div id="scroller-area"></div>
+        <div id="post-area">
+            <textarea id="post-input" cols="30" rows="2"></textarea>
+        </div>
+    </div>
+    <div id="user-area">
+      <div id="user-editor">
+        <input type="color" id="user-color" value="#00a1fb">
+        <input type="text" id="user-name" value="user" size="8">
+        <input type="button" value="add" id="user-submit">
+      </div>
+      <div id="users"></div>
+    </div>
+  </div>
+  <div id="inspector">
+    <div id="inspector-bar">
+      <span id="inspector-title"></span>
+      <span id="inspector-exit">❌</span>
+    </div>
+    <div id="inspector-body">
+      <input type="color" id="inspector-color">
+      <input type="text" id="inspector-name-input" size="7">
+      <input type="button" value="edit" id="inspector-submit"><br>
+      <span id="inspector-info"></span>
+    </div>
+  </div>
+  <script src="intraposting.js"></script>
