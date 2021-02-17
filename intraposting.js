@@ -1,6 +1,7 @@
 /*
   TODO:
   edit users
+    update scroller to reflect changed name
   edit channels
   edit and delete posts
   enhance scroller behavior
@@ -40,6 +41,13 @@ document.querySelector("#channel-submit").addEventListener("click", e => {
   selectChannel({target:{getAttribute:()=> channel.id}});
 });
 
+document.querySelector("#channel-input").addEventListener("keydown", e => {
+  if (e.keyCode === 13){
+    e.preventDefault();
+    document.querySelector("#channel-submit").click();
+  }
+})
+
 const renderUser = (user) => {
   const root = document.createElement("div");
   root.classList.add("user");
@@ -69,11 +77,18 @@ document.querySelector("#user-submit").addEventListener("click", e => {
     window.alert("they already exist!");
     return
   }
-  const user = {id:users.length,name:name,color:document.querySelector("#user-color").value,posts:[]};
+  const user = {id:users.length+'',name:name,color:document.querySelector("#user-color").value,posts:[]};
   users.push(user);
   renderUser(user);
   selectUser({target:{getAttribute:()=>user.id}});
 });
+
+document.querySelector("#user-name").addEventListener("keydown", e => {
+  if (e.keyCode === 13){
+    e.preventDefault();
+    document.querySelector("#user-submit").click();
+  }
+})
 
 document.querySelector("#post-input").addEventListener("keydown", e => {
   if (e.keyCode === 13) {
@@ -117,22 +132,24 @@ const renderPost = (post) => {
   const element = document.createElement("div");
   element.classList.add("post");
   element.setAttribute("data-post-id", post.id);
-  element.innerHTML = `<span class="post-time">${new Date(post.time).toTimeString().split(/ GMT/)[0]}</span> <span class="post-name" style="color:${post.user.color}">${post.user.name}:</span> <span class="post-text">${post.text}</span>`;
+  element.setAttribute("data-user-id", post.userId);
+  const user = users[post.userId];
+  element.innerHTML = `<span class="post-time">${new Date(post.time).toTimeString().split(/ GMT/)[0]}</span> <span class="post-name" style="color:${user.color}">${user.name}:</span> <span class="post-text">${post.text}</span>`;
   return element;
 }
 
 const postMessage = () => {
   const post = {
     id: posts.length,
-    user: users[document.querySelector("#users > .selected").getAttribute("data-user-id")],
-    channel: channels[document.querySelector("#channels > .selected").getAttribute("data-channel-id")],
+    userId: document.querySelector("#users > .selected").getAttribute("data-user-id"),
+    channelId: document.querySelector("#channels > .selected").getAttribute("data-channel-id"),
     time: Date.now(),
     text: document.querySelector("#post-input").value
   }
-  post.channel.posts.push(post.id);
-  post.user.posts.push(post.id);
+  channels[post.channelId].posts.push(post.id);
+  users[post.userId].posts.push(post.id);
   posts.push(post);
-  const scroller = document.querySelector(`.scroller[data-channel-id="${post.channel.id}"]`)
+  const scroller = document.querySelector(`.scroller[data-channel-id="${post.channelId}"]`)
   scroller.appendChild(renderPost(post));
   scroller.scrollTop = scroller.scrollHeight;
 }
@@ -208,5 +225,11 @@ document.querySelector("#inspector-submit").addEventListener("click", e => {
   document.querySelector(`.user-name[data-user-id="${user.id}"]`).innerText = user.name;
   document.querySelector(`.user-name[data-user-id="${user.id}"]`).style.color = user.color;
   document.querySelector("#user-name").value = user.name;
-  editUser(e);
+  for (let postName of document.querySelectorAll(".post-name")){
+    if (postName.parentElement.getAttribute("data-user-id") == user.id){
+      postName.style.color = user.color;
+      postName.innerText = user.name + ": ";
+    }
+  }
+  document.querySelector("#inspector-exit").click();
 })

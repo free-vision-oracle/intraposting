@@ -46,6 +46,11 @@ input[type="color"]{
   grid-template: 2rem auto / auto;
 }
 
+#users, #channels {
+  width: 12rem;
+  overflow-y: scroll;
+}
+
 #chat-area {
   min-width: 30rem;
   display: grid;
@@ -119,6 +124,7 @@ input[type="color"]{
 .user {
   display: grid;
   grid-template: 1.5rem / auto 2rem;
+  padding-right: 0.5rem;
 }
 
 .user-name{
@@ -153,6 +159,14 @@ input[type="color"]{
 
 .post-time {
   font-size: 75%;
+}
+
+#channels, #users {
+  scrollbar-width: 0.5rem;
+}
+
+#channels::-webkit-scrollbar, #users::-webkit-scrollbar {
+  width: 0.5rem;
 }
 
 /* Works on Firefox */
