@@ -12,15 +12,15 @@
       const fr = new FileReader();
       fr.onloadend = () => {
         // process the file
-        const data = JSON.parse(document.querySelector("#file-input".files[0]));
-        data.posts = data.posts.map((e) => {
-          return {id:post.id, userId:post.user.id, channelId:post.channel.id, time:post.time, text:post.text}
+        const data = JSON.parse(fr.result);
+        data.posts = data.posts.map((post) => {
+          return {id:post.id, userId:post.user.id, channelId:post.channel.id, time:post.time, text:post.text};
         });
-        // save the new thingy
         const saver = document.createElement("a");
         saver.setAttribute("download", "new_data.json");
         saver.setAttribute("href", URL.createObjectURL(new Blob([JSON.stringify(data)],{type:"text/json"})));
-        saver.click();
+        saver.click();        
       }
+      fr.readAsText(document.querySelector("#file-input").files[0]);
     });
   </script>
