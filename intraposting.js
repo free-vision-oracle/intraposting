@@ -1,15 +1,12 @@
 /*
   TODO:
-  edit users
-    update scroller to reflect changed name
+  text flies off the fucking screen
   edit channels
-  edit and delete posts
-  enhance scroller behavior
-  refine stylesheet
-  
-  I'M CONSIDERING:
-  media embeds, eg youtube
-  markdown
+  delete posts
+  enhance scroller gets too big
+  weird mix of hard edges and rounded borders
+  stuff doesn't line up quite right
+  probably a rewrite at this point with a goal of adding rich embeds
 */
 
 let channels = [];
@@ -42,7 +39,7 @@ document.querySelector("#channel-submit").addEventListener("click", e => {
 });
 
 document.querySelector("#channel-input").addEventListener("keydown", e => {
-  if (e.keyCode === 13){
+  if (e.key === "Enter"){
     e.preventDefault();
     document.querySelector("#channel-submit").click();
   }
@@ -84,14 +81,14 @@ document.querySelector("#user-submit").addEventListener("click", e => {
 });
 
 document.querySelector("#user-name").addEventListener("keydown", e => {
-  if (e.keyCode === 13){
+  if (e.key === "Enter"){
     e.preventDefault();
     document.querySelector("#user-submit").click();
   }
 })
 
 document.querySelector("#post-input").addEventListener("keydown", e => {
-  if (e.keyCode === 13) {
+  if (e.key === "Enter") {
     e.preventDefault();
     postMessage();
     e.target.value = "";
@@ -133,8 +130,21 @@ const renderPost = (post) => {
   element.classList.add("post");
   element.setAttribute("data-post-id", post.id);
   element.setAttribute("data-user-id", post.userId);
+  element.addEventListener("mouseover", e => {
+    element.classList.add("selected-post");
+    element.querySelector("a").style.display = "inline";
+  });
+  element.addEventListener("mouseout", e => {
+    element.querySelector("a").style.display = "none";
+    element.classList.remove("selected-post");
+  });
   const user = users[post.userId];
-  element.innerHTML = `<span class="post-time">${new Date(post.time).toTimeString().split(/ GMT/)[0]}</span> <span class="post-name" style="color:${user.color}">${user.name}:</span> <span class="post-text">${post.text}</span>`;
+  element.innerHTML = `<span class="post-time">${new Date(post.time).toTimeString().split(/ GMT/)[0]}</span> <span class="post-name" style="color:${user.color}">${user.name}:</span> <div class="post-text">${post.text}</div>`;
+  const editButton = document.createElement("a");
+  editButton.addEventListener("click", editPostPopup);
+  editButton.classList.add("post-edit-button");
+  editButton.innerText = "🖊";
+  element.appendChild(editButton);
   return element;
 }
 
@@ -156,7 +166,7 @@ const postMessage = () => {
 
 
 document.querySelector("#save-chat-button").addEventListener("click", e => {
-  const data = JSON.stringify({channels:channels, users:users, posts: posts});
+  const data = JSON.stringify({channels:channels, users:users, posts: posts}, 2);
   const link = document.createElement("a");
   link.setAttribute("href", URL.createObjectURL(new Blob([data], {type:"text/json"})));
   link.setAttribute("download", "intrachat" + "-" + Date.now() + ".json");
@@ -233,3 +243,34 @@ document.querySelector("#inspector-submit").addEventListener("click", e => {
   }
   document.querySelector("#inspector-exit").click();
 })
+
+const editPostPopup = (e) => {
+  const element = e.target.parentElement;
+  const post = posts[element.getAttribute("data-post-id")];
+  const textArea = document.createElement("textarea");
+  textArea.classList.add("post-edit-area");
+  textArea.addEventListener("keydown", e => {
+    if(e.key === "Enter") {
+      submitPostEdit(e)
+    }
+    textArea.style.innerHeight = textArea.scrollTop + "px";
+  });
+  textArea.value = post.text;
+  element.querySelector(".post-text").remove();
+  element.appendChild(textArea);
+}
+
+const submitPostEdit = (e) => {
+  const element = e.target.parentElement;
+  const post = posts[element.getAttribute("data-post-id")];
+  if (e.target.value){
+    post.text = e.target.value;
+  } else {
+    post.text = "";
+  }
+  e.target.remove();
+  const postText = document.createElement("span");
+  postText.classList.add("post-text");
+  postText.innerText = post.text;
+  element.appendChild(postText);
+}
