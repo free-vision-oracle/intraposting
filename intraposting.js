@@ -1,12 +1,6 @@
 /*
   TODO:
-  text flies off the fucking screen
-  edit channels
-  delete posts
-  enhance scroller gets too big
-  weird mix of hard edges and rounded borders
-  stuff doesn't line up quite right
-  probably a rewrite at this point with a goal of adding rich embeds
+    rewrite!
 */
 
 let channels = [];
@@ -139,7 +133,7 @@ const renderPost = (post) => {
     element.classList.remove("selected-post");
   });
   const user = users[post.userId];
-  element.innerHTML = `<span class="post-time">${new Date(post.time).toTimeString().split(/ GMT/)[0]}</span> <span class="post-name" style="color:${user.color}">${user.name}:</span> <div class="post-text">${post.text}</div>`;
+  element.innerHTML = `<span class="post-time">${new Date(post.time).toTimeString().split(/ GMT/)[0]}</span> <span class="post-name" style="color:${user.color}">${user.name}:</span> <span class="post-text">${post.text}</span>`;
   const editButton = document.createElement("a");
   editButton.addEventListener("click", editPostPopup);
   editButton.classList.add("post-edit-button");

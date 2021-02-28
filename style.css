@@ -164,6 +164,10 @@ input[type="color"]{
   color: #aaa;
 }
 
+.post {
+  height: 1.5em;
+}
+
 .selected-post {
   background-color: #333;
 }
