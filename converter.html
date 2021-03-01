@@ -7,8 +7,55 @@
   <div id="shade"></div>
   <div id="root">
     <div id="file-area">
-      <input type="button" value="load" id="file-load-button">
-      <input type="button" value="save" id="file-save-button">
+      <input type="button" value="convert" id="file-load-button">
     </div>
   </div>
-  <script src="intraposting.js"></script>
+  <script>
+    let channels, posts, users;
+
+    document.querySelector("#file-load-button").addEventListener("click", e => {
+      const loader =  document.createElement("input");
+      loader.setAttribute("type", "file");
+      loader.addEventListener("change", e => {
+        if (loader.files.length) {
+          const fr = new FileReader();
+          fr.onloadend = () => {
+            const data = JSON.parse(fr.result);
+            data.users = data.users.map( e => newUser(e));
+            data.posts = data.posts.map( e => newMessage(e));
+            const text = JSON.stringify(data, null, 2);
+            const link = document.createElement("a");
+            link.setAttribute("href", URL.createObjectURL(new Blob([text], {type:"text/json"})));
+            link.setAttribute("download", "intrachat" + "-" + Date.now() + ".json");
+            link.click();
+          }
+          fr.readAsText(loader.files[0]);
+        }
+      });
+      loader.click();
+    });
+
+    const newMessage = (oldPost) => {
+      return {
+        attachments : [],
+        author : oldPost.userId,
+        channel : oldPost.channelId,
+        content : oldPost.text,
+        createdTime : oldPost.time,
+        deleted : false,
+        editedTime: 0,
+        edits : [],
+      }
+    }
+
+    const newUser = (oldUser) => {
+      return {
+        displayName : oldUser.name,
+        avatar : 0,
+        color : oldUser.color,
+        createdTime: 0
+      }
+    }
+
+  </script>
+  
